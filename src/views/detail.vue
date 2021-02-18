@@ -183,7 +183,7 @@
       ></el-slider>
       <div>
         <div class="question">1. 请问您的工作年限？</div>
-        <el-select v-model="selVal" placeholder="请选择" size="mini">
+        <el-select v-model="selVal" placeholder="请选择" size="mini" @change="selectEvent">
           <el-option
             v-for="item in options"
             :key="item.value"
@@ -195,8 +195,8 @@
       </div>
       <div>
         <div class="question">2. 请问您的性别？</div>
-        <el-button type="primary" size="mini" @click="selectBtn">男性</el-button>
-        <el-button type="primary" size="mini">女性</el-button>
+        <el-button type="primary" size="mini" @click="selectBtn('men')" :class="setBtn('men')">男性</el-button>
+        <el-button type="primary" size="mini" @click="selectBtn('women')" :class="setBtn('women')">女性</el-button>
       </div>
       <div>
         <div class="question">3. 请问您生活在哪里？</div>
@@ -209,29 +209,45 @@
       </div>
       <div>
         <div class="question">4. 请问您的学历？</div>
-        <el-button type="primary" size="mini">博士</el-button>
-        <el-button type="primary" size="mini">硕士/本科</el-button>
-        <el-button type="primary" size="mini">其它</el-button>
+        <el-button type="primary" size="mini" @click="selectEduBtn('dr')" :class="setEduBtn('dr')">博士</el-button>
+        <el-button type="primary" size="mini" @click="selectEduBtn('md')" :class="setEduBtn('md')">硕士</el-button>
+        <el-button type="primary" size="mini" @click="selectEduBtn('course')" :class="setEduBtn('course')">本科</el-button>
+        <el-button type="primary" size="mini" @click="selectEduBtn('other')" :class="setEduBtn('other')">其它</el-button>
       </div>
       <div>
         <div class="question">5. 请问您从事的行业？</div>
+        <el-select v-model="industryVal" placeholder="请选择" size="mini" @change="industryEvent">
+          <el-option value='finance' label="金融">金融</el-option>
+        </el-select>
       </div>
       <div>
         <div class="question">6. 请问您大致的月收入？</div>
-        <el-slider v-model="incomeVal"></el-slider>
+        <el-row>
+          <el-col :span="4">5000</el-col>
+          <el-col :span="4" :push="16" style="text-align: right">500,000</el-col>
+        </el-row>
+        <el-slider v-model="incomeVal" :max="500000" :min="5000" :step="step" @change="setSlider"></el-slider>
       </div>
       <div>
         <div class="question">7. 请问您是否有房？</div>
-        <el-button type="primary" size="mini">是</el-button>
-        <el-button type="primary" size="mini">否</el-button>
+        <el-button type="primary" size="mini" @click="selectHouseBtn('y')" :class="setHouseBtn('y')">是</el-button>
+        <el-button type="primary" size="mini" @click="selectHouseBtn('n')" :class="setHouseBtn('n')">否</el-button>
       </div>
-      <div>
+      <div v-if="isHouse">
         <div class="question">8. 请问您房产的大致价值范围？</div>
-        <el-slider v-model="assetVal"></el-slider>
+        <el-slider v-model="assetVal" @change="assetSlider"></el-slider>
       </div>
       <div>
-        <div class="question">9. 您大致的流动资产价值（包括现金、理财）</div>
-        <el-slider v-model="flowAssetVal"></el-slider>
+        <div class="question">
+          <span v-if="!isHouse">8.</span>
+          <span v-else>9.</span>
+          您大致的流动资产价值（包括现金、理财）
+        </div>
+        <el-row>
+          <el-col :span="4">10万</el-col>
+          <el-col :span="4" :push="16" style="text-align: right">5000万</el-col>
+        </el-row>
+        <el-slider v-model="flowAssetVal" :max="50000000" :min="100000" :format-tooltip="formatTooltip" :step="100000" @change="flowAssetSlider"></el-slider>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="submit" size="mini">提 交</el-button>
@@ -266,14 +282,51 @@ export default {
       dialogVisible: false,
       anchorVal: 0,
       topVal: [0, 1],
-      options: [{
-        value: '选项1',
-        label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶'
-      }],
+      options: [
+        {
+          value: '1',
+          label: '0-5年'
+        },
+        {
+          value: '2',
+          label: '5-10年'
+        },
+        {
+          value: '3',
+          label: '10-15年'
+        },
+        {
+          value: '4',
+          label: '15-20年'
+        },
+        {
+          value: '5',
+          label: '20-25年'
+        },
+        {
+          value: '6',
+          label: '25-30年'
+        },
+        {
+          value: '7',
+          label: '30-35年'
+        },
+        {
+          value: '8',
+          label: '35-40年'
+        },
+        {
+          value: '9',
+          label: '40年以上'
+        }
+      ],
       selVal: '',
+      recordSelVal: '',
+      industryVal: '',
+      recordIndustryVal: '',
+      currentBtn: '',
+      eduBtn: '',
+      houseBtn: '',
       menuList: [
         { id: 'challenge', name: '背景与挑战', flag: 'challengeFlag', slide: 2, page: 1 },
         { id: 'risk', name: '什么是风险限额', flag: 'riskFlag', slide: 3, page: 2 },
@@ -282,22 +335,28 @@ export default {
         { id: 'bottom', name: '零售客户风险限额', flag: 'bottomFlag', slide: 6, page: 5 }
       ],
       addressVal: '',
+      recordAddressVal: '',
       addOptions: [
         {
           value: '1',
-          label: '北京',
-          children: [
-            {
-              value: '2',
-              label: '海淀'
-            }
-          ]
+          label: '北京'
+        },
+        {
+          value: '2',
+          label: '上海'
+        },
+        {
+          value: '3',
+          label: '广州'
         }
       ],
       number: 0,
-      incomeVal: 0,
+      incomeVal: 5000,
+      recordIncomeVal: 5000,
       assetVal: 0,
+      recordAssetVal: 0,
       flowAssetVal: 0,
+      recordFlowAssetVal: 0,
       challengeFlag: false,
       riskFlag: false,
       wayFlag: false,
@@ -316,7 +375,9 @@ export default {
         duration: 500,
         onLeave: this.onLeave
       },
-      numPage: 0
+      numPage: 0,
+      step: 5000,
+      isHouse: false
     }
   },
   computed: {
@@ -337,6 +398,33 @@ export default {
           return 'times-mar'
         } else if (val === '1') {
           return 'first-mar'
+        }
+      }
+    },
+    setBtn () {
+      return function (val) {
+        if (this.currentBtn === val) {
+          return 'custom-btn'
+        } else {
+          return ''
+        }
+      }
+    },
+    setEduBtn () {
+      return function (val) {
+        if (this.eduBtn === val) {
+          return 'custom-btn'
+        } else {
+          return ''
+        }
+      }
+    },
+    setHouseBtn () {
+      return function (val) {
+        if (this.houseBtn === val) {
+          return 'custom-btn'
+        } else {
+          return ''
         }
       }
     }
@@ -377,11 +465,58 @@ export default {
       // this.$refs.fullpage.init()
       // this.$refs.fullpage.reBuild()
     },
-    handleChange () {
-
+    handleChange (val) {
+      if (this.recordAddressVal === '') {
+        this.number = this.number + 1
+        this.recordAddressVal = val
+      }
     },
-    selectBtn () {
-
+    selectBtn (val) {
+      if (this.currentBtn === '') {
+        this.number = this.number + 1
+      }
+      this.currentBtn = val
+    },
+    selectEduBtn (val) {
+      if (this.eduBtn === '') {
+        this.number = this.number + 1
+      }
+      this.eduBtn = val
+    },
+    industryEvent (val) {
+      if (this.recordIndustryVal === '') {
+        this.number = this.number + 1
+        this.recordIndustryVal = val
+      }
+    },
+    setSlider (val) {
+      if (this.recordIncomeVal === 5000) {
+        this.number = this.number + 1
+        this.recordIncomeVal = val
+      }
+    },
+    assetSlider (val) {
+      if (this.recordAssetVal === 0) {
+        this.number = this.number + 1
+        this.recordAssetVal = val
+      }
+    },
+    flowAssetSlider (val) {
+      if (this.recordFlowAssetVal === 0) {
+        this.number = this.number + 1
+        this.recordFlowAssetVal = val
+      }
+    },
+    selectHouseBtn (val) {
+      if (this.houseBtn === '') {
+        this.number = this.number + 1
+      }
+      this.houseBtn = val
+      if (val === 'y') {
+        this.isHouse = true
+      } else {
+        this.isHouse = false
+      }
     },
     changeVal (val) {
       this.number = val[val.length - 1]
@@ -399,7 +534,6 @@ export default {
           this[item.flag] = false
         }
       })
-      console.log(direction)
       // 设置字体颜色
       if (direction) {
         this.numPage = destination.index
@@ -421,6 +555,15 @@ export default {
       this.dialogVisible = false
       this.fullOptions.autoScrolling = true
       this.fullOptions.scrollBar = true
+    },
+    formatTooltip (val) {
+      return (val / 10000) + '万'
+    },
+    selectEvent (val) {
+      if (this.recordSelVal === '') {
+        this.number = this.number + 1
+        this.recordSelVal = val
+      }
     }
   }
 }
@@ -670,7 +813,7 @@ export default {
     }
     p {
       font-size: 18px;
-      line-height: 24px;
+      line-height: 26px;
       color: #787878;
     }
   }
@@ -710,7 +853,7 @@ export default {
     }
     p {
       font-size: 18px;
-      line-height: 24px;
+      line-height: 26px;
       color: #787878;
     }
   }
@@ -813,6 +956,10 @@ export default {
   .modal {
     /deep/ .el-dialog__body {
       padding: 0 80px;
+    }
+    .custom-btn {
+      color: #fff;
+      background: #409eff;
     }
   }
   .abstruct {
