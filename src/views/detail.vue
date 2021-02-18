@@ -178,7 +178,6 @@
         :max="10"
         range
         disabled
-        @input="changeVal"
         class="title-slider"
       ></el-slider>
       <div>
@@ -350,7 +349,7 @@ export default {
           label: '广州'
         }
       ],
-      number: 0,
+      number: 1,
       incomeVal: 5000,
       recordIncomeVal: 5000,
       assetVal: 0,
@@ -468,48 +467,56 @@ export default {
     handleChange (val) {
       if (this.recordAddressVal === '') {
         this.number = this.number + 1
+        this.topVal = [0, this.number]
         this.recordAddressVal = val
       }
     },
     selectBtn (val) {
       if (this.currentBtn === '') {
         this.number = this.number + 1
+        this.topVal = [0, this.number]
       }
       this.currentBtn = val
     },
     selectEduBtn (val) {
       if (this.eduBtn === '') {
         this.number = this.number + 1
+        this.topVal = [0, this.number]
       }
       this.eduBtn = val
     },
     industryEvent (val) {
       if (this.recordIndustryVal === '') {
         this.number = this.number + 1
+        this.topVal = [0, this.number]
         this.recordIndustryVal = val
       }
     },
     setSlider (val) {
       if (this.recordIncomeVal === 5000) {
         this.number = this.number + 1
+        this.topVal = [0, this.number]
         this.recordIncomeVal = val
       }
     },
     assetSlider (val) {
       if (this.recordAssetVal === 0) {
         this.number = this.number + 1
+        this.topVal = [0, this.number]
         this.recordAssetVal = val
       }
     },
     flowAssetSlider (val) {
       if (this.recordFlowAssetVal === 0) {
         this.number = this.number + 1
+        this.topVal = [0, this.number]
         this.recordFlowAssetVal = val
       }
     },
     selectHouseBtn (val) {
       if (this.houseBtn === '') {
         this.number = this.number + 1
+        this.topVal = [0, this.number]
       }
       this.houseBtn = val
       if (val === 'y') {
@@ -517,9 +524,6 @@ export default {
       } else {
         this.isHouse = false
       }
-    },
-    changeVal (val) {
-      this.number = val[val.length - 1]
     },
     afterLoad (origin, destination, direction) {
       // direction：向上或向下
@@ -562,6 +566,7 @@ export default {
     selectEvent (val) {
       if (this.recordSelVal === '') {
         this.number = this.number + 1
+        this.topVal = [0, this.number]
         this.recordSelVal = val
       }
     }
