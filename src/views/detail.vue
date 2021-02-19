@@ -446,9 +446,9 @@ export default {
     },
     scrollEvent (e) {
       const flags = this.menuList.map(item => item.flag)
-      // const id = '.' + e.id
-      // const el = document.querySelector(id)
-      this.$nextTick(function () {
+      const id = '.' + e.id
+      const el = document.querySelector(id)
+      this.$nextTick(() => {
         flags.map(ele => {
           if (ele === e.flag) {
             this[e.flag] = true
@@ -456,13 +456,8 @@ export default {
             this[ele] = false
           }
         })
-        // window.scrollTo({'behavior': 'smooth', 'top': el.offsetTop})
+        window.scrollTo({'behavior': 'smooth', 'top': el.offsetTop})
       })
-      this.$refs.fullpage.api.moveTo(e.slide, 0)
-
-      // this.$refs.fullpage.api.moveSectionDown()
-      // this.$refs.fullpage.init()
-      // this.$refs.fullpage.reBuild()
     },
     handleChange (val) {
       if (this.recordAddressVal === '') {
