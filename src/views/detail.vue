@@ -255,6 +255,7 @@
   </div>
 </template>
 <script>
+import axios from 'axios'
 export default {
   data () {
     return {
@@ -554,6 +555,15 @@ export default {
       this.dialogVisible = false
       this.fullOptions.autoScrolling = true
       this.fullOptions.scrollBar = true
+      const param = {}
+      param.work_year = '0-5年'
+      param.gender = '男'
+      param.region = '上海'
+      param.edu = '本科'
+      param.industry = 'J'
+      axios.post('http://127.0.0.1:8000/quotaCal', param).then(res => {
+        console.log(res)
+      })
     },
     formatTooltip (val) {
       return (val / 10000) + '万'
