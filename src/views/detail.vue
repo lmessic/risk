@@ -252,6 +252,13 @@
         <el-button @click="submit" size="mini">提 交</el-button>
       </span>
     </el-dialog>
+    <el-dialog
+      :visible.sync="resultVisible"
+      width="40%"
+      center
+    >
+      <span>您的风险限额范围为{{minAmount}}元~{{maxAmount}}元，实际具体额度以最终评估为准</span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -280,6 +287,10 @@ export default {
         }
       ],
       dialogVisible: false,
+      resultVisible: false,
+      // 金额范围
+      minAmount: '',
+      maxAmount: '',
       anchorVal: 0,
       topVal: [0, 1],
       options: [
@@ -573,8 +584,14 @@ export default {
       param.region = this.addressVal.join(',')
       param.edu = this.eduVal
       param.industry = this.industryVal
+      param.monthincome = this.incomeVal
+      param.house = this.assetVal
+      param.asset = this.flowAssetVal
       axios.post('http://127.0.0.1:8000/quotaCal', param).then(res => {
         console.log(res)
+        this.minAmount = res.data.lower
+        this.maxAmount = res.data.upper
+        this.resultVisible = true
       })
     },
     formatTooltip (val) {
@@ -597,10 +614,6 @@ export default {
   overflow-x: hidden;
   /deep/ .el-dialog__wrapper {
     overflow-y: hidden;
-  }
-  /deep/ .el-dialog {
-    height: 700px;
-    overflow-y: scroll;
   }
   .top {
     width: 100%;
@@ -947,10 +960,6 @@ export default {
       overflow-y: hidden;
     }
   }
-  .dialog-footer .el-button {
-    border: 1px solid #1657d9;
-    color: #1657d9;
-  }
   .question {
     height: 50px;
     line-height: 50px;
@@ -976,8 +985,16 @@ export default {
     }
   }
   .modal {
+    /deep/ .el-dialog {
+      height: 700px;
+      overflow-y: scroll;
+    }
     /deep/ .el-dialog__body {
       padding: 0 80px;
+    }
+    .dialog-footer .el-button {
+      border: 1px solid #1657d9;
+      color: #1657d9;
     }
     .custom-btn {
       color: #fff;
