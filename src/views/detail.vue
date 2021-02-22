@@ -588,10 +588,13 @@ export default {
       param.house = this.assetVal
       param.asset = this.flowAssetVal
       axios.post('http://127.0.0.1:8000/quotaCal', param).then(res => {
-        console.log(res)
-        this.minAmount = res.data.lower
-        this.maxAmount = res.data.upper
-        this.resultVisible = true
+        if (res.status === 200) {
+          this.minAmount = res.data.lower
+          this.maxAmount = res.data.upper
+          this.resultVisible = true
+        } else {
+          this.$message('请求失败')
+        }
       })
     },
     formatTooltip (val) {
