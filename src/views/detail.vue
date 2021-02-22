@@ -216,7 +216,7 @@
       <div>
         <div class="question">5. 请问您从事的行业？</div>
         <el-select v-model="industryVal" placeholder="请选择" size="mini" @change="industryEvent">
-          <el-option value='finance' label="金融">金融</el-option>
+          <el-option value='J' label="金融">金融</el-option>
         </el-select>
       </div>
       <div>
@@ -284,43 +284,45 @@ export default {
       topVal: [0, 1],
       options: [
         {
-          value: '1',
+          value: '0-5年',
           label: '0-5年'
         },
         {
-          value: '2',
+          value: '5-10年',
           label: '5-10年'
         },
         {
-          value: '3',
+          value: '10-15年',
           label: '10-15年'
         },
         {
-          value: '4',
+          value: '15-20年',
           label: '15-20年'
         },
         {
-          value: '5',
+          value: '20-25年',
           label: '20-25年'
         },
         {
-          value: '6',
+          value: '25-30年',
           label: '25-30年'
         },
         {
-          value: '7',
+          value: '30-35年',
           label: '30-35年'
         },
         {
-          value: '8',
+          value: '35-40年',
           label: '35-40年'
         },
         {
-          value: '9',
+          value: '40年以上',
           label: '40年以上'
         }
       ],
       selVal: '',
+      gender: '',
+      eduVal: '',
       recordSelVal: '',
       industryVal: '',
       recordIndustryVal: '',
@@ -338,15 +340,15 @@ export default {
       recordAddressVal: '',
       addOptions: [
         {
-          value: '1',
+          value: '北京',
           label: '北京'
         },
         {
-          value: '2',
+          value: '上海',
           label: '上海'
         },
         {
-          value: '3',
+          value: '广州',
           label: '广州'
         }
       ],
@@ -473,6 +475,7 @@ export default {
         this.topVal = [0, this.number]
       }
       this.currentBtn = val
+      this.gender = val === 'men' ? '男' : '女'
     },
     selectEduBtn (val) {
       if (this.eduBtn === '') {
@@ -480,6 +483,15 @@ export default {
         this.topVal = [0, this.number]
       }
       this.eduBtn = val
+      if (val === 'dr') {
+        this.eduVal = '博士'
+      } else if (val === 'md') {
+        this.eduVal = '硕士'
+      } else if (val === 'course') {
+        this.eduVal = '本科'
+      } else if (val === 'other') {
+        this.eduVal = '其它'
+      }
     },
     industryEvent (val) {
       if (this.recordIndustryVal === '') {
@@ -556,11 +568,11 @@ export default {
       this.fullOptions.autoScrolling = true
       this.fullOptions.scrollBar = true
       const param = {}
-      param.work_year = '0-5年'
-      param.gender = '男'
-      param.region = '上海'
-      param.edu = '本科'
-      param.industry = 'J'
+      param.work_year = this.selVal
+      param.gender = this.gender
+      param.region = this.addressVal.join(',')
+      param.edu = this.eduVal
+      param.industry = this.industryVal
       axios.post('http://127.0.0.1:8000/quotaCal', param).then(res => {
         console.log(res)
       })
