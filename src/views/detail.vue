@@ -238,7 +238,7 @@
           <el-col :span="4">10万</el-col>
           <el-col :span="4" :push="16" style="text-align: right">5000万</el-col>
         </el-row>
-        <el-slider v-model="assetVal" @change="assetSlider" range :max="50000000" :min="100000" :format-tooltip="formatTooltip"></el-slider>
+        <el-slider v-model="assetVal" @change="assetSlider" :max="50000000" :min="100000" :format-tooltip="formatTooltip"></el-slider>
       </div>
       <div>
         <div class="question">
@@ -250,7 +250,7 @@
           <el-col :span="4">10万</el-col>
           <el-col :span="4" :push="16" style="text-align: right">5000万</el-col>
         </el-row>
-        <el-slider v-model="flowAssetVal" :max="50000000" :min="100000" range :format-tooltip="formatTooltip" :step="100000" @change="flowAssetSlider"></el-slider>
+        <el-slider v-model="flowAssetVal" :max="50000000" :min="100000" :format-tooltip="formatTooltip" :step="100000" @change="flowAssetSlider"></el-slider>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="submit" size="mini">提 交</el-button>
@@ -370,9 +370,9 @@ export default {
       number: 1,
       incomeVal: 5000,
       recordIncomeVal: 5000,
-      assetVal: [5000000, 10000000],
+      assetVal: 5000000,
       recordAssetVal: 0,
-      flowAssetVal: [5000000, 10000000],
+      flowAssetVal: 10000000,
       recordFlowAssetVal: 0,
       challengeFlag: false,
       riskFlag: false,
@@ -591,7 +591,7 @@ export default {
       param.monthincome = this.incomeVal
       param.house = this.assetVal
       param.asset = this.flowAssetVal
-      axios.post('http://127.0.0.1:8000/quotaCal', param).then(res => {
+      axios.post('http://0.0.0.0:5/quotaCal', param).then(res => {
         if (res.status === 200) {
           this.minAmount = res.data.lower
           this.maxAmount = res.data.upper
