@@ -169,9 +169,6 @@ export default {
       if (document.querySelector('.top') !== undefined && document.querySelector('.row-bg') !== undefined) {
         window.onmousewheel = document.onmousewheel = scrollFunc
       }
-      // document.onscroll = function func (e) {
-      //   console.log(document.documentElement.scrollTop)
-      // }
     }
   }
 }

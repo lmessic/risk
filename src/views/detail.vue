@@ -583,20 +583,23 @@ export default {
 
     },
     submit () {
-      this.dialogVisible = false
       this.fullOptions.autoScrolling = true
       this.fullOptions.scrollBar = true
       const param = {}
+      const addressValue = this.addressVal ? this.addressVal.join(',') : ''
       param.work_year = this.selVal
       param.gender = this.gender
-      param.region = this.addressVal ? this.addressVal.join(',') : ''
+      param.region = addressValue
       param.edu = this.eduVal
       param.industry = this.industryVal
       param.monthincome = this.incomeVal
       param.house = this.assetVal
       param.asset = this.flowAssetVal
-      axios.get('/quotaCal', param).then(res => {
-        if (res.status === 200) {
+      axios.get('/api/quotaCal?work_year=' + this.selVal + '&gender=' + this.gender +
+      '&region=' + addressValue + '&edu=' + this.eduVal + '&industry=' + this.industryVal +
+      '&monthincome=' + this.incomeVal + '&house=' + this.assetVal + '&asset=' + this.flowAssetVal).then(res => {
+        if (res.data instanceof Object) {
+          this.dialogVisible = false
           this.minAmount = res.data.lower
           this.maxAmount = res.data.upper
           this.resultVisible = true
