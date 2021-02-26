@@ -595,7 +595,7 @@ export default {
       param.monthincome = this.incomeVal
       param.house = this.assetVal
       param.asset = this.flowAssetVal
-      axios.post('/quotaCal', param).then(res => {
+      axios.get('/quotaCal', param).then(res => {
         if (res.status === 200) {
           this.minAmount = res.data.lower
           this.maxAmount = res.data.upper
