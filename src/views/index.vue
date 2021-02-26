@@ -78,14 +78,14 @@
       </el-row>
       <el-row type="flex" class="row-bg">
         <el-col :span="10" v-for="(item,index) in boxList" :key="index">
-          <div class="box">
+          <div class="box" @click="toDetail">
             <div class="box-bk" :class="setBk(item.type)"></div>
             <div class="content">
               <h4>{{ item.title }}</h4>
               <div class="text">{{ item.text }}</div>
               <div class="operate">
-                <span @click="toDetail">详情</span>
-                <i class="el-icon-right" @click="toDetail"></i>
+                <span>详情</span>
+                <i class="el-icon-right"></i>
               </div>
             </div>
           </div>
@@ -166,7 +166,9 @@ export default {
           this.textFlag = false
         }
       }
-      window.onmousewheel = document.onmousewheel = scrollFunc
+      if (document.querySelector('.top') !== undefined && document.querySelector('.row-bg') !== undefined) {
+        window.onmousewheel = document.onmousewheel = scrollFunc
+      }
     }
   }
 }
