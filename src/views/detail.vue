@@ -267,7 +267,7 @@
       width="40%"
       center
     >
-      <span>您的风险限额范围为{{minAmount}}元~{{maxAmount}}元，实际具体额度以最终评估为准</span>
+      <span>您的风险限额范围为{{minAmount}}万元~{{maxAmount}}万元，实际具体额度以最终评估为准</span>
     </el-dialog>
   </div>
 </template>
@@ -595,9 +595,19 @@ export default {
       param.monthincome = this.incomeVal
       param.house = this.assetVal
       param.asset = this.flowAssetVal
-      axios.get('/api/quotaCal?work_year=' + this.selVal + '&gender=' + this.gender +
-      '&region=' + addressValue + '&edu=' + this.eduVal + '&industry=' + this.industryVal +
-      '&monthincome=' + this.incomeVal + '&house=' + this.assetVal + '&asset=' + this.flowAssetVal).then(res => {
+      // axios.get('/api/quotaCal?work_year=' + this.selVal + '&gender=' + this.gender +
+      // '&region=' + addressValue + '&edu=' + this.eduVal + '&industry=' + this.industryVal +
+      // '&monthincome=' + this.incomeVal + '&house=' + this.assetVal + '&asset=' + this.flowAssetVal).then(res => {
+      //   if (res.data instanceof Object) {
+      //     this.dialogVisible = false
+      //     this.minAmount = res.data.lower
+      //     this.maxAmount = res.data.upper
+      //     this.resultVisible = true
+      //   } else {
+      //     this.$message('请求失败')
+      //   }
+      // })
+      axios.post('/api/quotaCal', param).then(res => {
         if (res.data instanceof Object) {
           this.dialogVisible = false
           this.minAmount = res.data.lower
