@@ -1,8 +1,10 @@
 <template>
   <div class="contain">
     <div class="anchor">
-      <span><el-image :src="require('../assets/logo_one.png')"></el-image></span>
-      <span><el-image :src="require('../assets/logo_two.png')"></el-image></span>
+      <div @click="scrollTop" class="scroll-top">
+        <span><el-image :src="require('../assets/logo_one.png')"></el-image></span>
+        <span><el-image :src="require('../assets/logo_two.png')"></el-image></span>
+      </div>
       <div class="aside">
         <div
           v-for="(item) in menuList"
@@ -96,7 +98,9 @@
         </el-col>
       </el-row>
       <el-row class="risk section">
-        <el-col :span="10"></el-col>
+        <el-col :span="10">
+          <div class="risk-bk"></div>
+        </el-col>
         <el-col :span="14" class="risk-content">
           <transition name="fade-risk">
             <div class="r-right" v-show="riskFlag">
@@ -138,7 +142,9 @@
         </div>
       </div>
       <el-row class="bottom section">
-        <el-col :span="10"></el-col>
+        <el-col :span="10">
+          <div class="bottom-bk"></div>
+        </el-col>
         <el-col :span="14" class="bottom-content">
           <transition name="fade-bottom">
             <div class="r-right" v-show="bottomFlag">
@@ -208,9 +214,9 @@
       </div>
       <div>
         <div class="question">4. 请问您的学历？</div>
-        <el-button type="primary" size="mini" @click="selectEduBtn('dr')" :class="setEduBtn('dr')">博士</el-button>
-        <el-button type="primary" size="mini" @click="selectEduBtn('md')" :class="setEduBtn('md')">硕士</el-button>
-        <el-button type="primary" size="mini" @click="selectEduBtn('course')" :class="setEduBtn('course')">本科</el-button>
+        <el-button type="primary" size="mini" @click="selectEduBtn('phd')" :class="setEduBtn('phd')">博士</el-button>
+        <el-button type="primary" size="mini" @click="selectEduBtn('master')" :class="setEduBtn('master')">硕士</el-button>
+        <el-button type="primary" size="mini" @click="selectEduBtn('bachelor')" :class="setEduBtn('bachelor')">本科</el-button>
         <el-button type="primary" size="mini" @click="selectEduBtn('other')" :class="setEduBtn('other')">其它</el-button>
       </div>
       <div>
@@ -261,7 +267,7 @@
       width="40%"
       center
     >
-      <span>您的风险限额范围为{{minAmount}}元~{{maxAmount}}元，实际具体额度以最终评估为准</span>
+      <span>您的风险限额范围为{{minAmount}}万元~{{maxAmount}}万元，实际具体额度以最终评估为准</span>
     </el-dialog>
   </div>
 </template>
@@ -299,39 +305,39 @@ export default {
       topVal: [0, 1],
       options: [
         {
-          value: '0-5年',
+          value: '0_5',
           label: '0-5年'
         },
         {
-          value: '5-10年',
+          value: '5_10',
           label: '5-10年'
         },
         {
-          value: '10-15年',
+          value: '10_15',
           label: '10-15年'
         },
         {
-          value: '15-20年',
+          value: '15_20',
           label: '15-20年'
         },
         {
-          value: '20-25年',
+          value: '20-25',
           label: '20-25年'
         },
         {
-          value: '25-30年',
+          value: '25_30',
           label: '25-30年'
         },
         {
-          value: '30-35年',
+          value: '30_35',
           label: '30-35年'
         },
         {
-          value: '35-40年',
+          value: '35_40',
           label: '35-40年'
         },
         {
-          value: '40年以上',
+          value: '40',
           label: '40年以上'
         }
       ],
@@ -355,16 +361,16 @@ export default {
       recordAddressVal: '',
       addOptions: [
         {
-          value: '北京',
+          value: 'bj',
           label: '北京'
         },
         {
-          value: '上海',
+          value: 'sh',
           label: '上海'
         },
         {
-          value: '广州',
-          label: '广州'
+          value: 'gd',
+          label: '广东'
         }
       ],
       number: 1,
@@ -400,7 +406,7 @@ export default {
   computed: {
     setBorderColor () {
       return function () {
-        if (this.numPage === 1 || this.numPage === 3 || this.numPage === 5) {
+        if (this.numPage === 1 || this.numPage === 3) {
           return 'divider-odd'
         } else {
           return 'divider-even'
@@ -477,6 +483,12 @@ export default {
         window.scrollTo({'behavior': 'smooth', 'top': el.offsetTop})
       })
     },
+    scrollTop () {
+      const el = document.querySelector('.scroll-top')
+      this.$nextTick(() => {
+        window.scrollTo({'behavior': 'smooth', 'top': el.offsetTop})
+      })
+    },
     handleChange (val) {
       if (this.recordAddressVal === '') {
         this.number = this.number + 1
@@ -490,7 +502,7 @@ export default {
         this.topVal = [0, this.number]
       }
       this.currentBtn = val
-      this.gender = val === 'men' ? '男' : '女'
+      this.gender = val === 'men' ? 'male' : 'female'
     },
     selectEduBtn (val) {
       if (this.eduBtn === '') {
@@ -498,15 +510,7 @@ export default {
         this.topVal = [0, this.number]
       }
       this.eduBtn = val
-      if (val === 'dr') {
-        this.eduVal = '博士'
-      } else if (val === 'md') {
-        this.eduVal = '硕士'
-      } else if (val === 'course') {
-        this.eduVal = '本科'
-      } else if (val === 'other') {
-        this.eduVal = '其它'
-      }
+      this.eduVal = val
     },
     industryEvent (val) {
       if (this.recordIndustryVal === '') {
@@ -579,20 +583,33 @@ export default {
 
     },
     submit () {
-      this.dialogVisible = false
       this.fullOptions.autoScrolling = true
       this.fullOptions.scrollBar = true
       const param = {}
+      const addressValue = this.addressVal ? this.addressVal.join(',') : ''
       param.work_year = this.selVal
       param.gender = this.gender
-      param.region = this.addressVal ? this.addressVal.join(',') : ''
+      param.region = addressValue
       param.edu = this.eduVal
       param.industry = this.industryVal
       param.monthincome = this.incomeVal
       param.house = this.assetVal
       param.asset = this.flowAssetVal
-      axios.post('http://0.0.0.0:5/quotaCal', param).then(res => {
-        if (res.status === 200) {
+      // axios.get('/api/quotaCal?work_year=' + this.selVal + '&gender=' + this.gender +
+      // '&region=' + addressValue + '&edu=' + this.eduVal + '&industry=' + this.industryVal +
+      // '&monthincome=' + this.incomeVal + '&house=' + this.assetVal + '&asset=' + this.flowAssetVal).then(res => {
+      //   if (res.data instanceof Object) {
+      //     this.dialogVisible = false
+      //     this.minAmount = res.data.lower
+      //     this.maxAmount = res.data.upper
+      //     this.resultVisible = true
+      //   } else {
+      //     this.$message('请求失败')
+      //   }
+      // })
+      axios.post('/api/quotaCal', param).then(res => {
+        if (res.data instanceof Object) {
+          this.dialogVisible = false
           this.minAmount = res.data.lower
           this.maxAmount = res.data.upper
           this.resultVisible = true
@@ -772,6 +789,9 @@ export default {
     top: 5%;
     left: 3%;
     z-index: 99;
+    .scroll-top {
+      cursor: pointer;
+    }
     span {
       display: inline-block;
       width: 48%;
@@ -787,11 +807,13 @@ export default {
         line-height: 40px;
         margin-bottom: 2px;
         cursor: pointer;
-        border-left: 1px solid rgb(158, 155, 155);
+        border-left: 3px solid rgb(158, 155, 155);
         line-height: 40px;
         padding-left: 10px;
       }
       .aside-text {
+        display: inline-block;
+        width: 100%;
         opacity: 0;
         color: #636363;
         box-shadow: none;
@@ -864,9 +886,17 @@ export default {
       height: 100vh;
     }
     .el-col-10 {
-      background: url("../assets/bk_four.jpg") no-repeat;
-      background-size: 100% 100%;
-      background-position: center 0;
+      overflow: hidden;
+      height: 100vh;
+      .risk-bk {
+        width: 170%;
+        height: 100%;
+        background: url("../assets/bk_four_two.jpg") no-repeat;
+        background-size: cover;
+        background-position: center center;
+        transform: translateX(-40%);
+        -webkit-transform: translateX(-40%);
+      }
     }
     .el-col-14 {
       background: #23283c;
@@ -926,7 +956,7 @@ export default {
     }
     .func {
       margin-top: 70px;
-      width: 90%;
+      width: 100%;
       height: 222px;
       background: url('../assets/flow_func.png') no-repeat;
       background-size: 100% 100%;
@@ -947,9 +977,17 @@ export default {
       height: 100vh;
     }
     .el-col-10 {
-      background: url("../assets/bk_two.jpeg") no-repeat;
-      background-size: 100% 100%;
-      background-position: center 0;
+      height: 100vh;
+      overflow: hidden;
+      .bottom-bk {
+        width: 130%;
+        height: 100%;
+        background: url("../assets/bk_two.jpeg") no-repeat;
+        background-size: cover;
+        background-position: center 0;
+        transform: translateX(-30%) rotateY(180deg);
+        -webkit-transform: translateX(-30%) rotateY(180deg);
+      }
     }
     .fade-bottom-enter-active {
       transition: all 2s ease;
