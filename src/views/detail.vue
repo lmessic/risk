@@ -28,12 +28,49 @@
           <div class="intro">
             零售客户风险限额模型从客户的成长性角度出发，明确了客户可承担的、最大客观的债务总量，实现了客户级风险总量控制
           </div>
-          <div class="desc">
+          <div class="chartNum">
+            <div v-for="(item, index) in list" :key="index">
+              <div v-if="item.id == 1" class="box-item">
+                <li class="number-item"
+                  v-for="(ele,idx) in orderNum"
+                  :key="idx"
+                >
+                  <span>
+                    <i ref="numberItem">0123456789</i>
+                  </span>
+                </li>
+              </div>
+              <div v-else-if="item.id == 2" class="box-item">
+                <li class="number-item"
+                  v-for="(ele,idx) in twoNum"
+                  :key="idx"
+                >
+                  <span>
+                    <i ref="twoNumberItem">0123456789</i>
+                  </span>
+                </li>
+              </div>
+              <div v-else class="box-item">
+                <li class="number-item"
+                  v-for="(ele,idx) in threeNum"
+                  :key="idx"
+                >
+                  <span>
+                    <i ref="threeNumberItem">0123456789</i>
+                  </span>
+                </li>
+              </div>
+              <div style="font-size: 21px; height: 40px;">{{ item.name }}</div>
+              <div style="font-size: 18px; height: 40px;">
+                {{ item.desc }}
+              </div>
+            </div>
+          </div>
+          <!-- <div class="desc">
             <div v-for="(item, index) in list" :key="index">
               <div class="num-wrapper">
                 <span style="opacity: 0; font-size: 30px;">1</span>
                 <span style="opacity: 0; font-size: 30px;">0</span>
-                <!-- <span>{{ item.num }}</span> -->
                 <transition name="num_one">
                   <div class="num_one" v-show="numFlag">
                     <p>1</p>
@@ -65,13 +102,13 @@
                     <p>0</p>
                   </div>
                 </transition>
-                <span class="name" :class="setMargin(item.id)">{{ item.name }}</span>
+                <div class="name" :class="setMargin(item.id)">{{ item.name }}</div>
               </div>
               <div class="text">
                 {{ item.desc }}
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
         <div class="back-img"></div>
       </div>
@@ -152,9 +189,7 @@
               <p>
                 零售客户风险限额模型引入了经济学中的人力资本理论、行为认知理论、金融素养理论以及风险偏好理论进行跨学科融合创新
               </p>
-              <el-button size="small" type="primary" @click="question"
-                >立即试用</el-button
-              >
+              <el-button size="small" type="primary" @click="question">立即试用</el-button>
             </div>
           </transition>
           <div class="abstruct">
@@ -400,7 +435,10 @@ export default {
       },
       numPage: 0,
       step: 5000,
-      isHouse: false
+      isHouse: false,
+      orderNum: ['0', '0'],
+      twoNum: ['0', '0', '0'],
+      threeNum: ['0']
     }
   },
   computed: {
@@ -461,8 +499,50 @@ export default {
       const x = (length - e.pageX) / 10
       background.style.transform = `translateX(${x}px)`
     })
+    this.increaseNumber()
+    this.orderNum = [4, 0]
+    this.twoNum = [6, 0, 0]
+    this.threeNum = [3]
   },
   methods: {
+    increaseNumber () {
+      this.timer = setInterval(() => {
+        this.setNumberTransform()
+        this.setTwoNumberTransform()
+        this.setThreeNumberTransform()
+      }, 1000)
+    },
+    // 设置文字滚动
+    setNumberTransform () {
+      const numberItems = this.$refs.numberItem // 拿到数字的ref，计算元素数量
+      const numberArr = this.orderNum.filter(item => !isNaN(item))
+      // 结合CSS 对数字字符进行滚动
+      for (let index = 0; index < numberItems.length; index++) {
+        const elem = numberItems[index]
+        const num = numberArr[index]
+        elem.style.transform = `translate(-50%, -${num * 10}%)`
+      }
+    },
+    setTwoNumberTransform () {
+      const numberItems = this.$refs.twoNumberItem // 拿到数字的ref，计算元素数量
+      const numberArr = this.twoNum.filter(item => !isNaN(item))
+      // 结合CSS 对数字字符进行滚动
+      for (let index = 0; index < numberItems.length; index++) {
+        const elem = numberItems[index]
+        const num = numberArr[index]
+        elem.style.transform = `translate(-50%, -${num * 10}%)`
+      }
+    },
+    setThreeNumberTransform () {
+      const numberItems = this.$refs.threeNumberItem // 拿到数字的ref，计算元素数量
+      const numberArr = this.threeNum.filter(item => !isNaN(item))
+      // 结合CSS 对数字字符进行滚动
+      for (let index = 0; index < numberItems.length; index++) {
+        const elem = numberItems[index]
+        const num = numberArr[index]
+        elem.style.transform = `translate(-50%, -${num * 10}%)`
+      }
+    },
     question () {
       this.dialogVisible = true
       this.fullOptions.autoScrolling = false
@@ -486,6 +566,10 @@ export default {
     scrollTop () {
       const el = document.querySelector('.scroll-top')
       this.$nextTick(() => {
+        this.increaseNumber()
+        this.orderNum = [4, 0]
+        this.twoNum = [6, 0, 0]
+        this.threeNum = [3]
         window.scrollTo({'behavior': 'smooth', 'top': el.offsetTop})
       })
     },
@@ -555,8 +639,6 @@ export default {
     afterLoad (origin, destination, direction) {
       // direction：向上或向下
       const el = document.querySelectorAll('.aside-text')
-      // const divider = document.querySelectorAll('.divider-text')
-      // const backImg = document.querySelector('.back-img')
       this.numFlag = destination.index === 0
       this.menuList.map(item => {
         if (item.page === destination.index) {
@@ -568,6 +650,18 @@ export default {
       // 设置字体颜色
       if (direction) {
         this.numPage = destination.index
+        if (destination.index === 0) {
+          this.$nextTick(() => {
+            this.increaseNumber()
+            this.orderNum = [4, 0]
+            this.twoNum = [6, 0, 0]
+            this.threeNum = [3]
+          })
+        } else {
+          this.orderNum = []
+          this.twoNum = []
+          this.threeNum = []
+        }
         if (destination.index === 2 || destination.index === 4 || destination.index === 5) {
           for (let i = 0; i < el.length; i++) {
             el[i].style.color = '#fff'
@@ -696,8 +790,8 @@ export default {
         -webkit-transition: all 2s ease;
       }
       .num_one-leave-active {
-        transition: all 1 ease;
-        -webkit-transition: all 1 ease;
+        transition: all 1s ease;
+        -webkit-transition: all 1s ease;
       }
       .num_one-enter, .num_one-leave-to {
         transform: translateY(54%);
@@ -715,8 +809,8 @@ export default {
         -webkit-transition: all 3s ease;
       }
       .num_two-leave-active {
-        transition: all 2 ease;
-        -webkit-transition: all 2 ease;
+        transition: all 2s ease;
+        -webkit-transition: all 2s ease;
       }
       .num_two-enter, .num_two-leave-to {
         transform: translateY(54%);
@@ -734,8 +828,8 @@ export default {
         -webkit-transition: all 4s ease;
       }
       .num_three-leave-active {
-        transition: all 3 ease;
-        -webkit-transition: all 3 ease;
+        transition: all 3s ease;
+        -webkit-transition: all 3s ease;
       }
       .num_three-enter, .num_three-leave-to {
         transform: translateY(54%);
@@ -833,6 +927,70 @@ export default {
       width: 50%;
       height: 50%;
       margin-top: 20px;
+    }
+  }
+  .chartNum {
+    width: 60%;
+    margin-left: 20%;
+    margin-top: 120px;
+    display: flex;
+    color: #fff;
+  }
+  .chartNum > div {
+    border-right: 1px solid #fff;
+    padding: 0 3%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    width: 33%;
+  }
+  .chartNum > div:nth-last-child(1) {
+    border: none;
+  }
+  .box-item {
+    position: relative;
+    height: 80px;
+    font-size: 60px;
+    line-height: 41px;
+    text-align: center;
+    list-style: none;
+    // color: #2D7CFF;
+    writing-mode: vertical-lr;
+    text-orientation: upright;
+    /*文字禁止编辑*/
+    -moz-user-select: none; /*火狐*/
+    -webkit-user-select: none; /*webkit浏览器*/
+    -ms-user-select: none; /*IE10*/
+    -khtml-user-select: none; /*早期浏览器*/
+    user-select: none;
+  }
+  .number-item {
+    width: 41px;
+    height: 75px;
+    // background: #ccc;
+    list-style: none;
+    // margin-right: 5px;
+    // background:rgba(250,250,250,1);
+    // border-radius:4px;
+    // border:1px solid rgba(221,221,221,1);
+    & > span {
+      position: relative;
+      display: inline-block;
+      margin-right: 10px;
+      width: 100%;
+      height: 100%;
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      overflow: hidden;
+      & > i {
+        font-style: normal;
+        position: absolute;
+        top: 11px;
+        left: 50%;
+        transform: translate(-50%, 10%);
+        transition: transform 1s ease-in-out;
+        letter-spacing: 10px;
+      }
     }
   }
   .challenge {

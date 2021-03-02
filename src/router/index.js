@@ -19,6 +19,11 @@ export default new Router({
       path: '/detail',
       name: '详情',
       component: () => import('@/views/detail')
+    },
+    {
+      path: '/test',
+      name: '测试',
+      component: () => import('@/views/test')
     }
   ]
 })
